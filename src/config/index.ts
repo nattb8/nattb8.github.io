@@ -1,7 +1,7 @@
 export const scope = "openid offline_access profile email transact"
 export const audience = "platform_api"
 
-const env = process.env.NODE_ENV
+// const env = process.env.NODE_ENV
 let redirectUri: string
 let logoutRedirectUri: string
 // if (env == "development") {

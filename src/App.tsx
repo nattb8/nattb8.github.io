@@ -1,11 +1,10 @@
-import React, { Dispatch, SetStateAction, createContext, useContext, useEffect, useLayoutEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Config, ImmutableX } from '@imtbl/core-sdk';
 import { Passport } from '@imtbl/passport';
 import { Environment, ImmutableConfiguration } from '@imtbl/config';
 import { audience, logoutRedirectUri, redirectUri, scope } from './config';
 import { EnvironmentNames } from './types';
 import { IMXProvider } from '@imtbl/provider';
-import logo from './logo.svg';
 import './App.css';
 
 const getCoreSdkConfig = (environment: EnvironmentNames) => {
@@ -117,7 +116,6 @@ function LogoutButton() {
 }
 
 function LogButton() {
-  const { passportClient } = useContext(ImmutableContext);
 
   const showLog = async () => {
     log(`logging`);
@@ -131,12 +129,11 @@ function LogButton() {
 }
 
 const SetupComponent = () => {
-  const { passportClient, imxProvider, setImxProvider, coreSdkClient } = useContext(ImmutableContext);
-  const searchParams = new URLSearchParams(document.location.search)
+  const { passportClient, imxProvider, coreSdkClient } = useContext(ImmutableContext);
 
   useEffect(() => {
       log('setting up ts sdk functions...')
-
+      const searchParams = new URLSearchParams(document.location.search)
       if (searchParams.has('code')) {
           log("loggedIn")
       }
@@ -209,7 +206,7 @@ const SetupComponent = () => {
       }
 
       log('completed TS functions set up')
-  }, [passportClient, imxProvider]);
+  }, [passportClient, imxProvider, coreSdkClient]);
 
   return (
       <>
