@@ -127,6 +127,7 @@ function LogButton() {
   if (window !== null && window !== undefined
       && window.ue5 !== null && window.ue5 !== undefined) {
         setLogs?.('can callback');
+        window.ue5("print", {"log":"can callback"});
       } else {
         setLogs?.('cannot callback');
       }
@@ -245,7 +246,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          nattb8 3
+          nattb8 4
         </p>
         <SetupComponent/>
       </header>
