@@ -54,6 +54,8 @@ const ImmutableContext = createContext<{
   environment: EnvironmentNames,
   imxProvider?: IMXProvider
   setImxProvider?: (imxProvider: IMXProvider) => void;
+  logs?: String,
+  setLogs?: (logs: String) => void;
 }>({
   coreSdkClient: new ImmutableX(getCoreSdkConfig(EnvironmentNames.Sandbox)),
   environment: EnvironmentNames.Sandbox
@@ -69,6 +71,7 @@ export const ImmutableProvider = ({
   );
   const [passportClient, setPassportClient] = useState<Passport>();
   const [imxProvider, setImxProvider] = useState<IMXProvider>();
+  const [logs, setLogs] = useState<String>();
 
   useEffect(() => {
     setCoreSdkClient(new ImmutableX(getCoreSdkConfig(environment)));
@@ -76,15 +79,15 @@ export const ImmutableProvider = ({
   }, [environment]);
 
   return (
-    <ImmutableContext.Provider value={{ coreSdkClient, passportClient, environment, imxProvider, setImxProvider }}>
+    <ImmutableContext.Provider value={{ coreSdkClient, passportClient, environment, imxProvider, setImxProvider, logs, setLogs }}>
       {children}
     </ImmutableContext.Provider>
   );
 };
 
 export function useImmutableProvider() {
-  const { coreSdkClient, passportClient, environment, imxProvider, setImxProvider } = useContext(ImmutableContext);
-  return { coreSdkClient, passportClient, environment, imxProvider, setImxProvider };
+  const { coreSdkClient, passportClient, environment, imxProvider, setImxProvider, logs, setLogs } = useContext(ImmutableContext);
+  return { coreSdkClient, passportClient, environment, imxProvider, setImxProvider, logs, setLogs };
 }
 
 function LoginButton() {
@@ -116,14 +119,24 @@ function LogoutButton() {
 }
 
 function LogButton() {
+  const { logs, setLogs } = useContext(ImmutableContext);
 
   const showLog = async () => {
-    log(`logging`);
+    // log(`logging`);
+    console.log(`hellooooo`)
+  if (window !== null && window !== undefined
+      && window.ue5 !== null && window.ue5 !== undefined) {
+        setLogs?.('can callback');
+      } else {
+        setLogs?.('cannot callback');
+      }
+  
   }
 
   return (
       <>
       <button onClick={showLog}>Show Log</button>
+      {logs}
       </>
   );
 }
@@ -232,7 +245,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          nattb8 2
+          nattb8 3
         </p>
         <SetupComponent/>
       </header>
