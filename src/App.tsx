@@ -228,16 +228,16 @@ function log(message: string) {
 
 function App() {
   return (
-    <ImmutableProvider>
+    // <ImmutableProvider>
     <div className="App">
       <header className="App-header">
         <p>
           nattb8
         </p>
-        <SetupComponent/>
+        {/* <SetupComponent/> */}
       </header>
     </div>
-    </ImmutableProvider>
+    // </ImmutableProvider>
   );
 }
 
