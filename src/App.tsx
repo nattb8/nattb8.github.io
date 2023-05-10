@@ -245,7 +245,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          nattb8 80%
+          nattb8 20%
         </p>
         <SetupComponent/>
       </header>
