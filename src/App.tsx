@@ -132,80 +132,80 @@ const SetupComponent = () => {
   const { passportClient, imxProvider, coreSdkClient } = useContext(ImmutableContext);
 
   useEffect(() => {
-      log('setting up ts sdk functions...')
-      const searchParams = new URLSearchParams(document.location.search)
-      if (searchParams.has('code')) {
-          log("loggedIn")
-      }
+      // log('setting up ts sdk functions...')
+      // const searchParams = new URLSearchParams(document.location.search)
+      // if (searchParams.has('code')) {
+      //     log("loggedIn")
+      // }
 
-      window.ue.interface.login = async function() {
-          log("logging out...")
-          await passportClient?.logout();
-      }
+      // window.ue.interface.login = async function() {
+      //     log("logging out...")
+      //     await passportClient?.logout();
+      // }
 
-      window.ue.interface.logout = async function() {
-          log("logging in...")
-          await passportClient?.connectImx();
-      }
-      window.ue.interface.getUserInfo = async function() {
-          try {
-              log("Getting user info...")
-              log(`passportClient is NOT null? ${passportClient !== null && passportClient !== undefined}`)
-              const userInfo = await passportClient?.getUserInfo();
-              log(`userInfo is NOT null? ${userInfo !== null && userInfo !== undefined}`)
-              if (userInfo) {
-                  window.ue5("print", {
-                      "email" : userInfo.email,
-                      "nickname" : userInfo.nickname,
-                      "sub" : userInfo.sub
-                  });
-              } else {
-                  log(`No user info`)
-              }
-          } catch (error) {
-              log(`ERROR getting user info.. ${error}`)
-          }
-      }
-      window.ue.interface.getAddress = async function() {
-          try {
-              log("Getting address...")
-              log(`imxProvider is NOT null? ${imxProvider !== null && imxProvider !== undefined}`)
-              const address = await imxProvider?.getAddress();
-              log(`address is NOT null? ${address !== null && address !== undefined}`)
-              if (address) {
-                  window.ue5("print", {"address" : address});
-              } else {
-                  log(`No address`)
-              }
-          } catch (error) {
-              window.ue5("print", {"ERROR getting address..": `${error}`});
-          }
-      }
+      // window.ue.interface.logout = async function() {
+      //     log("logging in...")
+      //     await passportClient?.connectImx();
+      // }
+      // window.ue.interface.getUserInfo = async function() {
+      //     try {
+      //         log("Getting user info...")
+      //         log(`passportClient is NOT null? ${passportClient !== null && passportClient !== undefined}`)
+      //         const userInfo = await passportClient?.getUserInfo();
+      //         log(`userInfo is NOT null? ${userInfo !== null && userInfo !== undefined}`)
+      //         if (userInfo) {
+      //             window.ue5("print", {
+      //                 "email" : userInfo.email,
+      //                 "nickname" : userInfo.nickname,
+      //                 "sub" : userInfo.sub
+      //             });
+      //         } else {
+      //             log(`No user info`)
+      //         }
+      //     } catch (error) {
+      //         log(`ERROR getting user info.. ${error}`)
+      //     }
+      // }
+      // window.ue.interface.getAddress = async function() {
+      //     try {
+      //         log("Getting address...")
+      //         log(`imxProvider is NOT null? ${imxProvider !== null && imxProvider !== undefined}`)
+      //         const address = await imxProvider?.getAddress();
+      //         log(`address is NOT null? ${address !== null && address !== undefined}`)
+      //         if (address) {
+      //             window.ue5("print", {"address" : address});
+      //         } else {
+      //             log(`No address`)
+      //         }
+      //     } catch (error) {
+      //         window.ue5("print", {"ERROR getting address..": `${error}`});
+      //     }
+      // }
 
-      window.ue.interface.getBalance = async function() {
-          try {
-              log("Getting balance...")
-              const response = await coreSdkClient?.getBalance({
-                  address: 'eth',
-                  owner: '0x0b01170789c5058dcd0c1254c571168644d18720'
-              })
-              if (response) {
-                  window.ue5("print", {
-                      "token_address" : response.token_address,
-                      "symbol" : response.symbol,
-                      "balance": response.balance,
-                      "preparing_withdrawal": response.preparing_withdrawal,
-                      "withdrawal": response.withdrawable
-                  });
-              } else {
-                  log(`No balance response`)
-              }
-          } catch (error) {
-              window.ue5("print", {"ERROR getting balance..": `${error}`});
-          }
-      }
+      // window.ue.interface.getBalance = async function() {
+      //     try {
+      //         log("Getting balance...")
+      //         const response = await coreSdkClient?.getBalance({
+      //             address: 'eth',
+      //             owner: '0x0b01170789c5058dcd0c1254c571168644d18720'
+      //         })
+      //         if (response) {
+      //             window.ue5("print", {
+      //                 "token_address" : response.token_address,
+      //                 "symbol" : response.symbol,
+      //                 "balance": response.balance,
+      //                 "preparing_withdrawal": response.preparing_withdrawal,
+      //                 "withdrawal": response.withdrawable
+      //             });
+      //         } else {
+      //             log(`No balance response`)
+      //         }
+      //     } catch (error) {
+      //         window.ue5("print", {"ERROR getting balance..": `${error}`});
+      //     }
+      // }
 
-      log('completed TS functions set up')
+      // log('completed TS functions set up')
   }, [passportClient, imxProvider, coreSdkClient]);
 
   return (
@@ -228,16 +228,16 @@ function log(message: string) {
 
 function App() {
   return (
-    // <ImmutableProvider>
+    <ImmutableProvider>
     <div className="App">
       <header className="App-header">
         <p>
-          nattb8
+          nattb8 2
         </p>
-        {/* <SetupComponent/> */}
+        <SetupComponent/>
       </header>
     </div>
-    // </ImmutableProvider>
+    </ImmutableProvider>
   );
 }
 
