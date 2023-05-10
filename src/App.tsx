@@ -245,7 +245,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          nattb8
+          nattb8 opacity
         </p>
         <SetupComponent/>
       </header>
