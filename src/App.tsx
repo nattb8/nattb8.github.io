@@ -89,7 +89,7 @@ const SetupComponent = () => {
 
   useEffect(() => {
     handleLoginCallback();
-  }, [passportClient]);
+  }, [passportClient, handleLoginCallback]);
 
   useEffect(() => {
       window.login = async function() {
