@@ -71,25 +71,25 @@ export function useImmutableProvider() {
 const SetupComponent = () => {
   const { passportClient, imxProvider, coreSdkClient, setImxProvider } = useContext(ImmutableContext);
 
-  const handleLoginCallback = async () => {
-    try {
-      const imxProvider = await passportClient?.loginCallback()
-      // console.log(`imxProvider ${imxProvider}`);
-      if (imxProvider !== null && imxProvider !== undefined) {
-        console.log("IMX provider set");
-        setImxProvider?.(imxProvider);
-        window.UnityPostMessage("IMX_PROVIDER_SET");
-      } else {
-        // console.log("no imx provider");
-      }
-    } catch (err) {
-      console.log(`handleLoginCallback error ${err}`)
-    }
-  }
-
   useEffect(() => {
+    const handleLoginCallback = async () => {
+      try {
+        const imxProvider = await passportClient?.loginCallback()
+        // console.log(`imxProvider ${imxProvider}`);
+        if (imxProvider !== null && imxProvider !== undefined) {
+          console.log("IMX provider set");
+          setImxProvider?.(imxProvider);
+          window.UnityPostMessage("IMX_PROVIDER_SET");
+        } else {
+          // console.log("no imx provider");
+        }
+      } catch (err) {
+        console.log(`handleLoginCallback error ${err}`)
+      }
+    }
+
     handleLoginCallback();
-  }, [passportClient, handleLoginCallback]);
+  }, [passportClient]);
 
   useEffect(() => {
       window.login = async function() {
