@@ -89,7 +89,7 @@ const SetupComponent = () => {
     }
 
     handleLoginCallback();
-  }, [passportClient]);
+  }, [passportClient, setImxProvider]);
 
   useEffect(() => {
       window.login = async function() {
