@@ -6,19 +6,13 @@ import { audience, logoutRedirectUri, redirectUri, scope } from './config';
 import { EnvironmentNames } from './types';
 import { IMXProvider } from '@imtbl/provider';
 import './App.css';
+import { Magic } from 'magic-sdk';
 
-const getCoreSdkConfig = (environment: EnvironmentNames) => {
-  switch (environment) {
-    case EnvironmentNames.Production: {
-      return Config.PRODUCTION;
-    }
-    case EnvironmentNames.Sandbox: {
-      return Config.SANDBOX;
-    }
-  }
-}
+const magic = new Magic('pk_live_4058236363130CA9', { 
+  network: 'goerli',
+});
 
-const getPassportConfig = (environment: EnvironmentNames) => {
+const getPassportConfig = () => {
   const sharedConfigurationValues = {
     scope,
     audience,
@@ -26,26 +20,13 @@ const getPassportConfig = (environment: EnvironmentNames) => {
     logoutRedirectUri,
   };
 
-  switch (environment) {
-    case EnvironmentNames.Production: {
-      return {
-        baseConfig: new ImmutableConfiguration({
-          environment: Environment.PRODUCTION,
-        }),
-        clientId: 'PtQRK4iRJ8GkXjiz6xfImMAYhPhW0cYk',
-        ...sharedConfigurationValues,
-      };
-    }
-    case EnvironmentNames.Sandbox: {
-      return {
-        baseConfig: new ImmutableConfiguration({
-          environment: Environment.SANDBOX,
-        }),
-        clientId: 'mjtCL8mt06BtbxSkp2vbrYStKWnXVZfo',
-        ...sharedConfigurationValues,
-      };
-    }
-  }
+  return {
+    baseConfig: new ImmutableConfiguration({
+      environment: Environment.SANDBOX,
+    }),
+    clientId: 'mjtCL8mt06BtbxSkp2vbrYStKWnXVZfo',
+    ...sharedConfigurationValues,
+  };
 };
 
 const ImmutableContext = createContext<{
@@ -53,14 +34,11 @@ const ImmutableContext = createContext<{
   coreSdkClient: ImmutableX,
   environment: EnvironmentNames,
   imxProvider?: IMXProvider
-  setImxProvider?: (imxProvider: IMXProvider) => void;
-  logs?: String,
-  setLogs?: (logs: String) => void;
+  setImxProvider?: (imxProvider: IMXProvider) => void
 }>({
-  coreSdkClient: new ImmutableX(getCoreSdkConfig(EnvironmentNames.Sandbox)),
+  coreSdkClient: new ImmutableX(Config.SANDBOX),
   environment: EnvironmentNames.Sandbox
 });
-
 
 export const ImmutableProvider = ({
   children,
@@ -74,169 +52,109 @@ export const ImmutableProvider = ({
   const [logs, setLogs] = useState<String>();
 
   useEffect(() => {
-    setCoreSdkClient(new ImmutableX(getCoreSdkConfig(environment)));
-    setPassportClient(new Passport(getPassportConfig(environment)));
+    setCoreSdkClient(new ImmutableX(Config.SANDBOX));
+    setPassportClient(new Passport(getPassportConfig()));
   }, [environment]);
 
   return (
-    <ImmutableContext.Provider value={{ coreSdkClient, passportClient, environment, imxProvider, setImxProvider, logs, setLogs }}>
+    <ImmutableContext.Provider value={{ coreSdkClient, passportClient, environment, imxProvider, setImxProvider }}>
       {children}
     </ImmutableContext.Provider>
   );
 };
 
 export function useImmutableProvider() {
-  const { coreSdkClient, passportClient, environment, imxProvider, setImxProvider, logs, setLogs } = useContext(ImmutableContext);
-  return { coreSdkClient, passportClient, environment, imxProvider, setImxProvider, logs, setLogs };
-}
-
-function LoginButton() {
-  const { passportClient } = useContext(ImmutableContext);
-
-  const callJavascript = async () => {
-      await passportClient?.connectImx();
-  }
-
-  return (
-    <>
-      <button onClick={callJavascript}>Login</button>
-    </>
-  );
-}
-
-function LogoutButton() {
-  const { passportClient } = useContext(ImmutableContext);
-
-  const callJavascript = async () => {
-      await passportClient?.logout();
-  }
-
-  return (
-      <>
-      <button onClick={callJavascript}>Logout</button>
-      </>
-  );
-}
-
-function LogButton() {
-  const { logs, setLogs } = useContext(ImmutableContext);
-
-  const showLog = async () => {
-    // log(`logging`);
-    console.log(`hellooooo`)
-  if (window !== null && window !== undefined
-      && window.ue5 !== null && window.ue5 !== undefined) {
-        setLogs?.('can callback');
-        window.ue5("print", {"log":"can callback"});
-      } else {
-        setLogs?.('cannot callback');
-      }
-  
-  }
-
-  return (
-      <>
-      <button onClick={showLog}>Show Log</button>
-      {logs}
-      </>
-  );
+  const { coreSdkClient, passportClient, environment, imxProvider, setImxProvider } = useContext(ImmutableContext);
+  return { coreSdkClient, passportClient, environment, imxProvider, setImxProvider };
 }
 
 const SetupComponent = () => {
-  const { passportClient, imxProvider, coreSdkClient } = useContext(ImmutableContext);
+  const { passportClient, imxProvider, coreSdkClient, setImxProvider } = useContext(ImmutableContext);
+
+  const handleLoginCallback = async () => {
+    try {
+      const imxProvider = await passportClient?.loginCallback()
+      // console.log(`imxProvider ${imxProvider}`);
+      if (imxProvider !== null && imxProvider !== undefined) {
+        console.log("IMX provider set");
+        setImxProvider?.(imxProvider);
+        window.UnityPostMessage("IMX_PROVIDER_SET");
+      } else {
+        // console.log("no imx provider");
+      }
+    } catch (err) {
+      console.log(`handleLoginCallback error ${err}`)
+    }
+  }
+
+  const callFunction = async function(jsonData: string) {
+    try {
+      window.console.log(`callFunction...${typeof jsonData}`);
+      window.console.log(`callFunction data: ${jsonData}`);
+      let json = JSON.parse(jsonData);
+      let fxName = json["fxName"] as string;
+      let requestId = json["requestId"] as string;
+      window.console.log(`requestId ${requestId}...`);
+      switch(fxName) {
+        case "login": {
+          await passportClient?.connectImx();
+          break;
+        }
+        case "getAddress": {
+          const address = await imxProvider?.getAddress();
+          window.UnityPostMessage(
+            JSON.stringify({
+              responseFor: fxName,
+              requestId: requestId,
+              address: address
+            }
+          ));
+          break;
+        }
+        case "logout": {
+          window.UnityPostMessage("LOGOUT_SUCCESS");
+          await passportClient?.logout();
+          break;
+        }
+      }
+    } catch (error) {
+      window.console.log(error);
+    }
+  }
 
   useEffect(() => {
-      log('setting up ts sdk functions...')
-      const searchParams = new URLSearchParams(document.location.search)
-      if (searchParams.has('code')) {
-          log("loggedIn")
+    handleLoginCallback();
+  }, [passportClient]);
+
+  useEffect(() => {
+      window.login = async function() {
+        await passportClient?.connectImx();
       }
 
-      window.ue.interface.login = async function() {
-          log("logging out...")
-          await passportClient?.logout();
+      window.getAddress = async function(arg?: string | null) {
+        const address = await imxProvider?.getAddress() ?? "-";
+        window.UnityPostMessage(address);
       }
 
-      window.ue.interface.logout = async function() {
-          log("logging in...")
-          await passportClient?.connectImx();
-      }
-      window.ue.interface.getUserInfo = async function() {
-          try {
-              log("Getting user info...")
-              log(`passportClient is NOT null? ${passportClient !== null && passportClient !== undefined}`)
-              const userInfo = await passportClient?.getUserInfo();
-              log(`userInfo is NOT null? ${userInfo !== null && userInfo !== undefined}`)
-              if (userInfo) {
-                  window.ue5("print", {
-                      "email" : userInfo.email,
-                      "nickname" : userInfo.nickname,
-                      "sub" : userInfo.sub
-                  });
-              } else {
-                  log(`No user info`)
-              }
-          } catch (error) {
-              log(`ERROR getting user info.. ${error}`)
-          }
-      }
-      window.ue.interface.getAddress = async function() {
-          try {
-              log("Getting address...")
-              log(`imxProvider is NOT null? ${imxProvider !== null && imxProvider !== undefined}`)
-              const address = await imxProvider?.getAddress();
-              log(`address is NOT null? ${address !== null && address !== undefined}`)
-              if (address) {
-                  window.ue5("print", {"address" : address});
-              } else {
-                  log(`No address`)
-              }
-          } catch (error) {
-              window.ue5("print", {"ERROR getting address..": `${error}`});
-          }
+      window.logout = async function() {
+        await passportClient?.logout();
+        window.UnityPostMessage("LOGOUT_SUCCESS");
       }
 
-      window.ue.interface.getBalance = async function() {
-          try {
-              log("Getting balance...")
-              const response = await coreSdkClient?.getBalance({
-                  address: 'eth',
-                  owner: '0x0b01170789c5058dcd0c1254c571168644d18720'
-              })
-              if (response) {
-                  window.ue5("print", {
-                      "token_address" : response.token_address,
-                      "symbol" : response.symbol,
-                      "balance": response.balance,
-                      "preparing_withdrawal": response.preparing_withdrawal,
-                      "withdrawal": response.withdrawable
-                  });
-              } else {
-                  log(`No balance response`)
-              }
-          } catch (error) {
-              window.ue5("print", {"ERROR getting balance..": `${error}`});
-          }
+      window.initialise = function() {
+        window.registerFunction(callFunction);
       }
 
-      log('completed TS functions set up')
+      window.callFunction = function() {
+        let json = {"fxName":"login","requestId":"efacc744-9f50-4f06-974b-ee989683cf78"};
+      }
+
   }, [passportClient, imxProvider, coreSdkClient]);
 
   return (
       <>
-      <LoginButton />
-      <LogoutButton />
-      <LogButton />
       </>
   );
-}
-
-function log(message: string) {
-  console.log(message)
-  if (window !== null && window !== undefined
-      && window.ue5 !== null && window.ue5 !== undefined) {
-          window.ue5("print", {"log":message})
-      }
 }
 
 function App() {
@@ -245,7 +163,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          nattb8 0% 2
+          nattb8 unity poc
         </p>
         <SetupComponent/>
       </header>

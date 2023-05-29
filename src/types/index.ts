@@ -2,8 +2,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { IMXProvider } from '@imtbl/provider'
 
 export enum EnvironmentNames {
-  Sandbox = "sandbox",
-  Production = "production",
+  Sandbox = "sandbox"
 }
 
 export interface EnvironmentPropsType {

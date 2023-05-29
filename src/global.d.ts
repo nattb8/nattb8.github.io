@@ -1,31 +1,11 @@
-declare const ue: {
-    /**
-     * Object providing communication with UE4.
-     *
-     * The `broadcast` method sends data to UE4.
-     *
-     * All other properties should be functions to be called from UE4 by the `Call` function of the WebInterface widget blueprint.
-     */
-    interface: {
-        /**
-         * Sends data to UE4 by calling the 'OnInterfaceEvent' event dispatcher.
-         *
-         * @param name Pseudo-event name to be passed to the `Name` event parameter.
-         * @param data Optional value to be passed to the `Data` event parameter as a UE4 `JSON Value`.
-         */
-        broadcast(name: string, data?: any): void;
-    } & {
-        [key: string]: (data?: any) => void;
-    };
-};
-/**
- * Alias for `ue.interface.broadcast`.
- *
- */
-declare const ue4: typeof ue.interface.broadcast;
-
 interface Window {
-    test(message: string): void;
-    ue5(name: string, data: any): void;
-    ue: ue;
+    callFunction(): void;
+    initialise(): void;
+    registerFunction(fx: Function): void;
+    login(): void;
+    logout(): void;
+    getAccessToken(): void;
+    getAddress(requestId: string): void;
+    unityCallback(requestId: string, data: string): void;
+    UnityPostMessage(message: string): void;
 }
