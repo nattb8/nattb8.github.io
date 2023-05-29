@@ -87,41 +87,6 @@ const SetupComponent = () => {
     }
   }
 
-  const callFunction = async function(jsonData: string) {
-    try {
-      window.console.log(`callFunction...${typeof jsonData}`);
-      window.console.log(`callFunction data: ${jsonData}`);
-      let json = JSON.parse(jsonData);
-      let fxName = json["fxName"] as string;
-      let requestId = json["requestId"] as string;
-      window.console.log(`requestId ${requestId}...`);
-      switch(fxName) {
-        case "login": {
-          await passportClient?.connectImx();
-          break;
-        }
-        case "getAddress": {
-          const address = await imxProvider?.getAddress();
-          window.UnityPostMessage(
-            JSON.stringify({
-              responseFor: fxName,
-              requestId: requestId,
-              address: address
-            }
-          ));
-          break;
-        }
-        case "logout": {
-          window.UnityPostMessage("LOGOUT_SUCCESS");
-          await passportClient?.logout();
-          break;
-        }
-      }
-    } catch (error) {
-      window.console.log(error);
-    }
-  }
-
   useEffect(() => {
     handleLoginCallback();
   }, [passportClient]);
@@ -141,12 +106,44 @@ const SetupComponent = () => {
         window.UnityPostMessage("LOGOUT_SUCCESS");
       }
 
-      window.initialise = function() {
-        window.registerFunction(callFunction);
+      window.callFunction = async function(jsonData: string) {
+        try {
+          window.console.log(`callFunction...${typeof jsonData}`);
+          window.console.log(`callFunction data: ${jsonData}`);
+          let json = JSON.parse(jsonData);
+          let fxName = json["fxName"] as string;
+          let requestId = json["requestId"] as string;
+          window.console.log(`requestId ${requestId}...`);
+          switch(fxName) {
+            case "login": {
+              await passportClient?.connectImx();
+              break;
+            }
+            case "getAddress": {
+              const address = await imxProvider?.getAddress();
+              window.UnityPostMessage(
+                JSON.stringify({
+                  responseFor: fxName,
+                  requestId: requestId,
+                  address: address
+                }
+              ));
+              break;
+            }
+            case "logout": {
+              window.UnityPostMessage("LOGOUT_SUCCESS");
+              await passportClient?.logout();
+              break;
+            }
+          }
+        } catch (error) {
+          window.console.log(error);
+        }
       }
+    
 
-      window.callFunction = function() {
-        let json = {"fxName":"login","requestId":"efacc744-9f50-4f06-974b-ee989683cf78"};
+      window.initialise = function() {
+        window.registerFunction(window.callFunction);
       }
 
   }, [passportClient, imxProvider, coreSdkClient]);
@@ -163,7 +160,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          nattb8 unity poc
+          nattb8 Unity
         </p>
         <SetupComponent/>
       </header>

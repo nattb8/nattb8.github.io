@@ -1,5 +1,5 @@
 interface Window {
-    callFunction(): void;
+    callFunction(jsonData: string): void;
     initialise(): void;
     registerFunction(fx: Function): void;
     login(): void;
