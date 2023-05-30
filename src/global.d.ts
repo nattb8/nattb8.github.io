@@ -2,7 +2,7 @@ interface Window {
     callFunction(jsonData: string): void;
     initialise(): void;
     registerFunction(fx: Function): void;
-    login(): void;
+    connect(): void;
     logout(): void;
     getAccessToken(): void;
     getAddress(requestId: string): void;

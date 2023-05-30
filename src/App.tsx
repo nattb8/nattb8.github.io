@@ -92,7 +92,7 @@ const SetupComponent = () => {
   }, [passportClient, setImxProvider]);
 
   useEffect(() => {
-      window.login = async function() {
+      window.connect = async function() {
         await passportClient?.connectImx();
       }
 
@@ -114,7 +114,7 @@ const SetupComponent = () => {
           let requestId = json["requestId"] as string;
           window.console.log(`requestId ${requestId}...`);
           switch(fxName) {
-            case "login": {
+            case "connect": {
               await passportClient?.connectImx();
               break;
             }
