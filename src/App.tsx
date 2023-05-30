@@ -158,6 +158,7 @@ function App() {
   return (
     <ImmutableProvider>
     <div className="App">
+      <SetupComponent/>
       {/* <header className="App-header">
         <p>
           nattb8 Unity
