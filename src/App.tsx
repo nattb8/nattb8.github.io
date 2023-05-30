@@ -103,7 +103,6 @@ const SetupComponent = () => {
 
       window.logout = async function() {
         await passportClient?.logout();
-        window.UnityPostMessage("LOGOUT_SUCCESS");
       }
 
       window.callFunction = async function(jsonData: string) {
@@ -131,7 +130,6 @@ const SetupComponent = () => {
               break;
             }
             case "logout": {
-              window.UnityPostMessage("LOGOUT_SUCCESS");
               await passportClient?.logout();
               break;
             }
