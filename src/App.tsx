@@ -158,12 +158,12 @@ function App() {
   return (
     <ImmutableProvider>
     <div className="App">
-      <header className="App-header">
+      {/* <header className="App-header">
         <p>
           nattb8 Unity
         </p>
         <SetupComponent/>
-      </header>
+      </header> */}
     </div>
     </ImmutableProvider>
   );
