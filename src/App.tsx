@@ -92,6 +92,8 @@ const SetupComponent = () => {
   }, [passportClient, setImxProvider]);
 
   useEffect(() => {
+    console.log(`Set up functions...`);
+
       window.connect = async function() {
         await passportClient?.connectImx();
       }
@@ -114,12 +116,12 @@ const SetupComponent = () => {
           window.console.log(`requestId ${requestId}...`);
           switch(fxName) {
             case "connect": {
-              window.console.log("Calling connect...");
+              window.console.log(`Calling connect...${passportClient != null}`);
               await passportClient?.connectImx();
               break;
             }
             case "getAddress": {
-              window.console.log("Calling getAddress...");
+              window.console.log(`Calling getAddress...${imxProvider != null}`);
               const address = await imxProvider?.getAddress();
               window.UnityPostMessage(
                 JSON.stringify({
@@ -131,7 +133,7 @@ const SetupComponent = () => {
               break;
             }
             case "logout": {
-              window.console.log("Calling logout...");
+              window.console.log(`Calling logout...${passportClient != null}`);
               await passportClient?.logout();
               break;
             }
