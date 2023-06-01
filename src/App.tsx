@@ -92,8 +92,6 @@ const SetupComponent = () => {
   }, [passportClient, setImxProvider]);
 
   useEffect(() => {
-    console.log(`Set up functions...`);
-
       window.connect = async function() {
         await passportClient?.connectImx();
       }
