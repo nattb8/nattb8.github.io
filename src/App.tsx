@@ -107,7 +107,6 @@ const SetupComponent = () => {
 
       window.callFunction = async function(jsonData: string) {
         try {
-          window.console.log(`callFunction...${typeof jsonData}`);
           window.console.log(`callFunction data: ${jsonData}`);
           let json = JSON.parse(jsonData);
           let fxName = json["fxName"] as string;
@@ -115,10 +114,12 @@ const SetupComponent = () => {
           window.console.log(`requestId ${requestId}...`);
           switch(fxName) {
             case "connect": {
+              window.console.log("Calling connect...");
               await passportClient?.connectImx();
               break;
             }
             case "getAddress": {
+              window.console.log("Calling getAddress...");
               const address = await imxProvider?.getAddress();
               window.UnityPostMessage(
                 JSON.stringify({
@@ -130,6 +131,7 @@ const SetupComponent = () => {
               break;
             }
             case "logout": {
+              window.console.log("Calling logout...");
               await passportClient?.logout();
               break;
             }
