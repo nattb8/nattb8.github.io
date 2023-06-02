@@ -93,19 +93,6 @@ const SetupComponent = () => {
   }, [passportClient, setImxProvider]);
 
   useEffect(() => {
-      window.connect = async function() {
-        await passportClient?.connectImx();
-      }
-
-      window.getAddress = async function(arg?: string | null) {
-        const address = await imxProvider?.getAddress() ?? "-";
-        window.UnityPostMessage(address);
-      }
-
-      window.logout = async function() {
-        await passportClient?.logout();
-      }
-
       window.callFunction = async function(jsonData: string) {
         try {
           window.console.log(`callFunction data: ${jsonData}`);
@@ -147,6 +134,7 @@ const SetupComponent = () => {
         window.registerFunction(window.callFunction);
       }
 
+      console.log("IMX_FUNCTIONS_READY");
       window.UnityPostMessage("IMX_FUNCTIONS_READY");
 
   }, [passportClient, imxProvider, coreSdkClient]);
