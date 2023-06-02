@@ -85,6 +85,7 @@ const SetupComponent = () => {
         }
       } catch (err) {
         console.log(`handleLoginCallback error ${err}`)
+
       }
     }
 
@@ -145,6 +146,8 @@ const SetupComponent = () => {
       window.initialise = function() {
         window.registerFunction(window.callFunction);
       }
+
+      window.UnityPostMessage("IMX_FUNCTIONS_READY");
 
   }, [passportClient, imxProvider, coreSdkClient]);
 
