@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Config, ImmutableX } from '@imtbl/core-sdk';
-import { Passport } from '@imtbl/passport';
+import { Passport, User } from '@imtbl/passport';
 import { Environment, ImmutableConfiguration } from '@imtbl/config';
 import { audience, logoutRedirectUri, redirectUri, scope } from './config';
 import { EnvironmentNames } from './types';
 import { IMXProvider } from '@imtbl/provider';
 import './App.css';
 import { Magic } from 'magic-sdk';
+
+var ready = false;
 
 const magic = new Magic('pk_live_4058236363130CA9', { 
   network: 'goerli',
@@ -76,21 +78,28 @@ const SetupComponent = () => {
       try {
         const imxProvider = await passportClient?.loginCallback()
         // console.log(`imxProvider ${imxProvider}`);
+        // console.log(`passportClient ${passportClient}`);
         if (imxProvider !== null && imxProvider !== undefined) {
           console.log("IMX provider set");
           setImxProvider?.(imxProvider);
-          window.UnityPostMessage("IMX_PROVIDER_SET");
+          callbackToUnity("IMX_PROVIDER_SET");
         } else {
           // console.log("no imx provider");
         }
       } catch (err) {
         console.log(`handleLoginCallback error ${err}`)
-
       }
     }
 
     handleLoginCallback();
   }, [passportClient, setImxProvider]);
+
+  const callbackToUnity = function(message: string) {
+    console.log(message);
+    if (window.UnityPostMessage != undefined) {
+      window.UnityPostMessage(message);
+    }
+  }
 
   useEffect(() => {
       window.callFunction = async function(jsonData: string) {
@@ -109,7 +118,7 @@ const SetupComponent = () => {
             case "getAddress": {
               window.console.log(`Calling getAddress...${imxProvider != null}`);
               const address = await imxProvider?.getAddress();
-              window.UnityPostMessage(
+              callbackToUnity(
                 JSON.stringify({
                   responseFor: fxName,
                   requestId: requestId,
@@ -128,14 +137,27 @@ const SetupComponent = () => {
           window.console.log(error);
         }
       }
-    
 
       window.initialise = function() {
         window.registerFunction(window.callFunction);
       }
 
-      console.log("IMX_FUNCTIONS_READY");
-      window.UnityPostMessage("IMX_FUNCTIONS_READY");
+      window.getImxProvider = async function(jsonData: string) {
+        try {
+        console.log(`getImxProvider jsonData: ${jsonData} ${passportClient}`);
+        let user = JSON.parse(jsonData) as User;
+        console.log(`getImxProvider user: ${user} ${user.accessToken}`);
+        let provider = await passportClient?.getImxProvider(user);
+        console.log(`provider: ${provider}`);
+        } catch (error) {
+          console.log(`getImxProvider error ${error}`);
+        }
+      }
+
+      if (!ready) {
+        callbackToUnity("IMX_FUNCTIONS_READY");
+        ready = true;
+      }
 
   }, [passportClient, imxProvider, coreSdkClient]);
 
@@ -149,13 +171,12 @@ function App() {
   return (
     <ImmutableProvider>
     <div className="App">
-      <SetupComponent/>
-      {/* <header className="App-header">
+      <header className="App-header">
         <p>
-          nattb8 Unity
+          nattb8 Unity GetProvider
         </p>
         <SetupComponent/>
-      </header> */}
+      </header>
     </div>
     </ImmutableProvider>
   );
