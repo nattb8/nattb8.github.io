@@ -96,7 +96,7 @@ const SetupComponent = () => {
 
   const callbackToUnity = function(message: string) {
     console.log(message);
-    if (window.UnityPostMessage != undefined) {
+    if (window.UnityPostMessage !== undefined) {
       window.UnityPostMessage(message);
     }
   }
