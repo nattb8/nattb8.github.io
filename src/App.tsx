@@ -130,11 +130,11 @@ const SetupComponent = () => {
             case "getImxProvider": {
               window.console.log(`Calling getImxProvider...`);
               try {
-                console.log(`web getImxProvider jsonData: ${jsonData}`);
                 let user = JSON.parse(json["data"] as string) as User;
-                console.log(`web getImxProvider user: ${user} ${user.accessToken} ${user.idToken}`);
+                console.log(`web getImxProvider user: ${user}`);
                 let provider = await passportClient?.getImxProvider(user);
                 var success = false;
+                console.log(`web getImxProvider provider is not null ? ${provider}`);
                 if (provider !== null && provider !== undefined) {
                   console.log("web getImxProvider IMX provider set");
                   setImxProvider?.(provider);
@@ -188,7 +188,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          nattb8 Unity GetProvider 3
+          nattb8 Unity GetProvider Null
         </p>
         <SetupComponent/>
       </header>
