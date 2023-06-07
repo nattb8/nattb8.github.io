@@ -154,6 +154,23 @@ const SetupComponent = () => {
               }
               break;
             }
+            case "signMessage": {
+              window.console.log(`Calling signMessage...`);
+              try {
+                let message = json["data"] as string;
+                let signed = await passportClient?.signMessage(message);
+                callbackToUnity(
+                  JSON.stringify({
+                    responseFor: fxName,
+                    requestId: requestId,
+                    result: signed
+                  }
+                ));
+              } catch (error) {
+                console.log(`web signMessage error ${error}`);
+              }
+              break;
+            }
             case "logout": {
               window.console.log(`Calling logout...${passportClient != null}`);
               await passportClient?.logout();
@@ -188,7 +205,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          nattb8 Unity GetProvider Null
+          nattb8 Unity Sign
         </p>
         <SetupComponent/>
       </header>
