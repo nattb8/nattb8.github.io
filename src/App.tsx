@@ -127,6 +127,25 @@ const SetupComponent = () => {
               ));
               break;
             }
+            case "getImxProvider": {
+              window.console.log(`Calling getImxProvider...`);
+              try {
+                console.log(`web getImxProvider jsonData: ${jsonData} ${passportClient}`);
+                let user = JSON.parse(json["data"] as string) as User;
+                console.log(`web getImxProvider user: ${user} ${user.accessToken} ${user.idToken}`);
+                let provider = await passportClient?.getImxProvider(user);
+                if (imxProvider !== null && imxProvider !== undefined) {
+                  console.log("web getImxProvider IMX provider set");
+                  setImxProvider?.(imxProvider);
+                  callbackToUnity("IMX_PROVIDER_SET");
+                } else {
+                  console.log("web getImxProvider no IMX provider");
+                }
+              } catch (error) {
+                console.log(`web getImxProvider error ${error}`);
+              }
+              break;
+            }
             case "logout": {
               window.console.log(`Calling logout...${passportClient != null}`);
               await passportClient?.logout();
@@ -142,24 +161,12 @@ const SetupComponent = () => {
         window.registerFunction(window.callFunction);
       }
 
-      window.getImxProvider = async function(jsonData: string) {
-        try {
-        console.log(`getImxProvider jsonData: ${jsonData} ${passportClient}`);
-        let user = JSON.parse(jsonData) as User;
-        console.log(`getImxProvider user: ${user} ${user.accessToken}`);
-        let provider = await passportClient?.getImxProvider(user);
-        console.log(`provider: ${provider}`);
-        } catch (error) {
-          console.log(`getImxProvider error ${error}`);
-        }
-      }
-
       if (!ready) {
         callbackToUnity("IMX_FUNCTIONS_READY");
         ready = true;
       }
 
-  }, [passportClient, imxProvider, coreSdkClient]);
+  }, [passportClient, imxProvider, coreSdkClient, setImxProvider]);
 
   return (
       <>
@@ -173,7 +180,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          nattb8 Unity GetProvider
+          nattb8 Unity GetProvider 2
         </p>
         <SetupComponent/>
       </header>
